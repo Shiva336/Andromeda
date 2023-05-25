@@ -4,7 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
-const productModel = require('./models/product');
+const productModel = require('../models/product');
 const url = 'mongodb+srv://admin:admin@shophere.goowmfm.mongodb.net/test';
 const { config } = require('dotenv');
 
