@@ -27,6 +27,14 @@ const importProductData = async () => {
   } catch (e) {
     console.log(e);
   }
+  try {
+    res = JSON.stringify(await userModel.find({}));
+    fs.writeFile('./user-data.json', res, (err) => {
+      if (err) throw err;
+    });
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const importUserData = async () => {
