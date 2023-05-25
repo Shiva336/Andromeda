@@ -33,7 +33,7 @@ const importData = async () => {
         img: product[i].img,
         featured: product[i].featured,
       });
-
+      console.log(newProduct);
       const Product = await newProduct.save();
     }
   } catch (err) {
