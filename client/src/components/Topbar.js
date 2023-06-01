@@ -4,7 +4,7 @@ import '../styles/topbar.css';
 import { Search } from '@material-ui/icons';
 import { ShoppingCart } from '@material-ui/icons';
 import { animateScroll as scroll } from 'react-scroll';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { IoLogInOutline } from 'react-icons/io5';
 import { GoSignOut } from 'react-icons/go';
 import { FaUserCircle } from 'react-icons/fa';
@@ -82,6 +82,7 @@ function Topbar() {
     api.post('/product/search', searchHistory).then((response) => {
       console.log(response);
     });
+    navigate(`/product/${param}`);
   };
 
   const handleLogout = () => {
