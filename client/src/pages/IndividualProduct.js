@@ -20,7 +20,6 @@ function IndividualProduct() {
       id: id,
       username: localStorage.getItem("loggedUser"),
     };
-    console.log(data);
     const response = await api.put(`product/remove`, data);
     if(response.status === 200){
       alert(product.name+" removed successfully !");

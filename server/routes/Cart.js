@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 //add product to cart
 router.put('/cart', async (req, res) => {
   const user = await userModel.findOne({ name: req.body.username });
+  console.log(user.name);
   let flag = 0;
   try {
     user.cart.items.map((product) => {
@@ -20,22 +21,19 @@ router.put('/cart', async (req, res) => {
       res.json(user);
     }
 
-    if (flag === 0) {
-      const Cart = {
-        orderNumber: req.body.number,
-        items: user.cart.items,
-        total: user.cart.total,
-      };
+    else if(flag === 0) {
       const newItem = {
         quantity: 1,
         id: req.body.id,
         price: req.body.price,
         total: req.body.price,
       };
-      Cart.items.push(newItem);
-      if (user.cart.total == 0) Cart.total = req.body.price;
-      else Cart.total += req.body.price;
-      await user.updateOne({ $set: { cart: Cart } });
+      await user.cart.items.push(newItem);
+      if (user.cart.total == 0) 
+        user.cart.total = req.body.price;
+      else 
+        user.cart.total += req.body.price;
+      await user.save();
       res.status(200).json(user);
     }
   } catch (err) {

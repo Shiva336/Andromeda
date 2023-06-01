@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const productModel = require("../models/product");
+const userModel = require("../models/users");
 
 //get all products
 router.get("/", async(req,res)=> {
@@ -26,6 +27,7 @@ router.get("/featured", async(req,res)=> {
 router.get("/:id", async(req,res)=> {
   try{
     const products =  await productModel.findById(req.params.id);
+
     res.status(200).json(products);
   }
   catch(err) {
@@ -74,6 +76,31 @@ router.post("/", async(req,res)=> {
         return res.status(500).json(err);
     }
 });
+
+//product search
+router.post("/search",async(req,res)=> {
+  try{
+    const user = userModel.findOne({name: req.body.username}); 
+    const product = productModel.findById(req.body.product_id);
+    let flag = -1;
+    user.searchData.map((item)=> {
+      if(product.name === item.product) {
+        flag = 1;
+        item.value = item.value+1;
+      }
+    });
+    
+    if(flag === -1) {
+      const data = {product: product.name, value: 1}
+      user.searchData.push(data);
+      await user.save();
+    }
+
+  }
+  catch(error) {
+    return res.status(500).json(error);
+  }
+})
 
 //update rating
 router.put("/:id/rating", async(req,res)=> {
