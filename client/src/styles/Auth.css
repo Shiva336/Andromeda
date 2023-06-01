@@ -117,11 +117,11 @@ input:focus {
 }
 
 .switch-form-link {
-  border:none;
-  background-color:white;
-  width:fit-content;
-  height:fit-content;
-  cursor:pointer
+  border: none;
+  background-color: white;
+  width: fit-content;
+  height: fit-content;
+  cursor: pointer;
 }
 
 a {
