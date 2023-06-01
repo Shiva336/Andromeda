@@ -49,6 +49,10 @@ const userSchema = new mongoose.Schema({
             default: 0
         }
     },
+    searchData: {
+        type: Array,
+        default: []
+    },
     wishlist: {
         items: {
             type: Array,
