@@ -92,7 +92,8 @@ router.post("/search",async(req,res)=> {
     
     if(flag === -1) {
       const data = {product: product.name, value: 1}
-      await user.updateOne({ $push: {cart: data}});  
+      user.searchData.push(data);
+      await user.save();
     }
 
   }
