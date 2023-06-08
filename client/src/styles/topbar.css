@@ -8,6 +8,9 @@
   padding-top: 10px;
   overflow: hidden;
 }
+.topbarContainer-mob {
+  display: none;
+}
 .topbar-container {
   display: flex;
   flex-direction: column;
@@ -247,7 +250,7 @@ li {
   align-items: center;
   gap: 2px;
 }
-.profile-open-icon{
+.profile-open-icon {
   cursor: pointer;
 }
 .option-text {
@@ -267,7 +270,6 @@ li {
   border-right: 12px solid transparent;
   border-bottom: 12px solid rgb(76, 20, 197);
 }
-
 
 .category-navbar-links {
   margin-left: 0;

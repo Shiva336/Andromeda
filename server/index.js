@@ -3,7 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
-const url = 'mongodb+srv://admin:admin@shophere.goowmfm.mongodb.net/test';
+const url = 'mongodb+srv://admin:admin@andromeda.esfay3s.mongodb.net/andromeda';
 const { config } = require('dotenv');
 
 config({ path: './config/config.env' });
