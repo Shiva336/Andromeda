@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import '../styles/topbar.css';
-import { Search } from '@material-ui/icons';
-import { ShoppingCart } from '@material-ui/icons';
+import { FiSearch } from 'react-icons/fi';
+import { BsCartFill } from 'react-icons/bs';
 import { animateScroll as scroll } from 'react-scroll';
 import { useNavigate } from 'react-router-dom';
 import { IoLogInOutline } from 'react-icons/io5';
@@ -122,7 +122,7 @@ function Topbar() {
           ShopHere
         </span>
         <div className='searchbar'>
-          <Search className='searchIcon' />
+          <FiSearch className='searchIcon' />
           <input
             placeholder='Search for a product'
             type='text'
@@ -152,13 +152,13 @@ function Topbar() {
         <div className='topbarIcons'>
           {loggedUser !== 'admin' && (
             <div className='topbarIconItem'>
-              <ShoppingCart className='cart-icon' onClick={handleCartClick} />
+              <BsCartFill className='cart-icon' onClick={handleCartClick} />
               <div className='topbarIconBadge'>{cartCount}</div>
             </div>
           )}
           {loggedUser === 'admin' && (
             <div className='topbarIconItem'>
-              <ShoppingCart
+              <BsCartFill
                 className='cart-icon'
                 style={{ color: 'hsl(180, 3%, 7%)' }}
               />
@@ -209,13 +209,13 @@ function Topbar() {
                       <hr />
                       {loggedUser !== 'admin' && (
                         <div className='all-btn' onClick={handleCartClick}>
-                          <ShoppingCart className='profile-open-icon' />
+                          <BsCartFill className='profile-open-icon' />
                           <span className='option-text'>My Cart</span>
                         </div>
                       )}
                       {loggedUser === 'admin' && (
                         <div className='all-btn' onClick={handleAdminClick}>
-                          <ShoppingCart className='profile-open-icon' />
+                          <BsCartFill className='profile-open-icon' />
                           <span className='option-text'>Upload product</span>
                         </div>
                       )}
