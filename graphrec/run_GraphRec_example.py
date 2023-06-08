@@ -111,7 +111,7 @@ def test(model, device, test_loader):
         for test_u, test_v, tmp_target in test_loader:
             test_u, test_v, tmp_target = test_u.to(device), test_v.to(device), tmp_target.to(device)
             val_output = model.forward(test_u, test_v)
-            tmp_pred.append([val_output.data.item()])  
+            tmp_pred.append([val_output.data.item()])  #changed
             target.append(list(tmp_target.data.cpu().numpy()))
     tmp_pred = np.array(sum(tmp_pred, []))
     target = np.array(sum(target, []))
@@ -125,9 +125,9 @@ def test(model, device, test_loader):
 def main():
     # Training settings
     parser = argparse.ArgumentParser(description='Social Recommendation: GraphRec model')
-    parser.add_argument('--batch_size', type=int, default=128, metavar='N', help='input batch size for training')
+    parser.add_argument('--batch_size', type=int, default=2, metavar='N', help='input batch size for training')
     parser.add_argument('--embed_dim', type=int, default=64, metavar='N', help='embedding size')
-    parser.add_argument('--lr', type=float, default=0.001, metavar='LR', help='learning rate')
+    parser.add_argument('--lr', type=float, default=0.5, metavar='LR', help='learning rate')
     parser.add_argument('--test_batch_size', type=int, default=1000, metavar='N', help='input batch size for testing')
     parser.add_argument('--epochs', type=int, default=100, metavar='N', help='number of epochs to train')
     args = parser.parse_args()
@@ -152,7 +152,6 @@ def main():
     test_v = json.loads(test_v)
     test_r = json.loads(test_r)
     history_u_lists = ast.literal_eval(history_u_lists)
-    print(type(history_u_lists))
     history_ur_lists = ast.literal_eval(history_ur_lists)
     history_v_lists = ast.literal_eval(history_v_lists)
     history_vr_lists = ast.literal_eval(history_vr_lists)

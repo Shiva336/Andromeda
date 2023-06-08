@@ -23,7 +23,7 @@ class UV_Aggregator(nn.Module):
         self.w_r1 = nn.Linear(self.embed_dim * 2, self.embed_dim)
         self.w_r2 = nn.Linear(self.embed_dim, self.embed_dim)
         self.att = Attention(self.embed_dim)
-        new_size = (25, 64)
+        new_size = (25, 64) #changed
         new_weight = nn.Parameter(torch.empty(new_size))
         self.v2e.weight = new_weight
     def forward(self, nodes, history_uv, history_r):
