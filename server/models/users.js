@@ -49,7 +49,11 @@ const userSchema = new mongoose.Schema({
             default: 0
         }
     },
-    searchData: {
+    rated: {
+        type: Array,
+        default: []
+    },
+    interacted: {
         type: Array,
         default: []
     },
