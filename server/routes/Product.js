@@ -78,7 +78,7 @@ router.post("/", async(req,res)=> {
 });
 
 //product search
-router.post("/search",async(req,res)=> {
+router.put("/search",async(req,res)=> {
   try{
     const user = userModel.findOne({name: req.body.username}); 
     const product = productModel.findById(req.body.product_id);

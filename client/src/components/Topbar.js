@@ -79,7 +79,7 @@ function Topbar() {
       username: loggedUser,
       product_id: param,
     };
-    api.post('/product/search', searchHistory).then((response) => {
+    api.put('/product/search', searchHistory).then((response) => {
       console.log(response);
     });
     navigate(`/product/${param}`);
