@@ -19,9 +19,7 @@ router.put('/cart', async (req, res) => {
     if (flag == 1) {
       await user.updateOne({ $set: { cart: user.cart } });
       res.json(user);
-    }
-
-    else if(flag === 0) {
+    } else if (flag === 0) {
       const newItem = {
         quantity: 1,
         id: req.body.id,
@@ -29,10 +27,8 @@ router.put('/cart', async (req, res) => {
         total: req.body.price,
       };
       await user.cart.items.push(newItem);
-      if (user.cart.total == 0) 
-        user.cart.total = req.body.price;
-      else 
-        user.cart.total += req.body.price;
+      if (user.cart.total == 0) user.cart.total = req.body.price;
+      else user.cart.total += req.body.price;
       await user.save();
       res.status(200).json(user);
     }
