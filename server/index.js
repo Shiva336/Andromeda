@@ -27,6 +27,10 @@ app.use('/product', productRouter);
 const cartRouter = require('./routes/Cart');
 app.use('/order', cartRouter);
 const paymentRouter = require('./routes/Payment');
+
+const chatRouter = require('./routes/chat');
+app.use('/gpt/chat', chatRouter);
+
 app.use('/api', paymentRouter);
 
 app.listen('3002', () => {});

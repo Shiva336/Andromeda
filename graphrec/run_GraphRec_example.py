@@ -111,12 +111,10 @@ def test(model, device, test_loader):
         for test_u, test_v, tmp_target in test_loader:
             test_u, test_v, tmp_target = test_u.to(device), test_v.to(device), tmp_target.to(device)
             val_output = model.forward(test_u, test_v)
-            tmp_pred.append([val_output.data.item()])  
+            tmp_pred.append(val_output.data.squeeze().tolist())
             target.append(list(tmp_target.data.cpu().numpy()))
     tmp_pred = np.array(sum(tmp_pred, []))
     target = np.array(sum(target, []))
-    print(tmp_pred)
-    print(target)
     expected_rmse = sqrt(mean_squared_error(tmp_pred, target))
     mae = mean_absolute_error(tmp_pred, target)
     return expected_rmse, mae
@@ -140,24 +138,44 @@ def main():
 
     embed_dim = args.embed_dim
 
-    dir_data = './data/andromeda-data0'
-    path_data = dir_data + ".txt"
-    data_file = open(path_data, 'rb')
-    history_u_lists, history_ur_lists, history_v_lists, history_vr_lists, train_u, train_v, train_r, test_u, test_v, test_r, social_adj_lists, ratings_list = np.loadtxt(
-        data_file,delimiter=';',skiprows=0,dtype=str)
-    train_u = json.loads(train_u)
-    train_v = json.loads(train_v)
-    train_r = json.loads(train_r)
-    test_u = json.loads(test_u)
-    test_v = json.loads(test_v)
-    test_r = json.loads(test_r)
-    history_u_lists = ast.literal_eval(history_u_lists)
-    print(type(history_u_lists))
-    history_ur_lists = ast.literal_eval(history_ur_lists)
-    history_v_lists = ast.literal_eval(history_v_lists)
-    history_vr_lists = ast.literal_eval(history_vr_lists)
-    social_adj_lists = ast.literal_eval(social_adj_lists)
-    ratings_list = ast.literal_eval(ratings_list)
+    path_data = './data/'
+    train_uf = open(path_data+'train_user_array.json', 'rb')
+    train_vf = open(path_data+'train_item_array.json', 'rb')
+    train_rf = open(path_data+'train_rating_array.json', 'rb')
+    test_uf = open(path_data+'test_user_array.json', 'rb')
+    test_vf = open(path_data+'test_item_array.json', 'rb')
+    test_rf = open(path_data+'test_rating_array.json', 'rb')
+    history_u_listsf = open(path_data+'user_item_interactions.json', 'rb')
+    history_ur_listsf = open(path_data+'user_item_ratings.json', 'rb')
+    history_v_listsf = open(path_data+'item_user_interactions.json', 'rb')
+    history_vr_listsf = open(path_data+'item_user_ratings.json', 'rb')
+    social_adj_listsf = open(path_data+'social_adj_lists.json', 'rb')
+    ratings_listf = open(path_data+'ratings_list.json', 'rb')
+
+    
+    train_u = json.load(train_uf)
+    train_v = json.load(train_vf)
+    train_r = json.load(train_rf)
+    test_u = json.load(test_uf)
+    test_v = json.load(test_vf)
+    test_r = json.load(test_rf)
+    history_u_listst =  json.load(history_u_listsf)
+    history_ur_listst = json.load(history_ur_listsf)
+    history_v_listst =  json.load(history_v_listsf)
+    history_vr_listst = json.load(history_vr_listsf)
+    social_adj_listst = json.load(social_adj_listsf)
+    ratings_listt = json.load(ratings_listf)
+
+    history_u_lists = {int(key): value for key, value in history_u_listst.items()}
+    history_ur_lists = {int(key): value for key, value in history_ur_listst.items()}
+    history_v_lists = {int(key): value for key, value in history_v_listst.items()}
+    history_vr_lists = {int(key): value for key, value in history_vr_listst.items()}
+    social_adj_lists = {int(key): value for key, value in social_adj_listst.items()}
+    ratings_list = {float(key): value for key, value in ratings_listt.items()}
+ 
+
+
+
 
 
 
@@ -192,8 +210,8 @@ def main():
     num_items = history_v_lists.__len__()
     num_ratings = ratings_list.__len__()
 
-    u2e = nn.Embedding(num_users, embed_dim).to(device)
-    v2e = nn.Embedding(num_items, embed_dim).to(device)
+    u2e = nn.Embedding(num_users+1, embed_dim).to(device)
+    v2e = nn.Embedding(num_items+1, embed_dim).to(device)
     r2e = nn.Embedding(num_ratings, embed_dim).to(device)
 
     # user feature
