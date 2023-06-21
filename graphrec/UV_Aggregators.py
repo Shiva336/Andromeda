@@ -23,9 +23,7 @@ class UV_Aggregator(nn.Module):
         self.w_r1 = nn.Linear(self.embed_dim * 2, self.embed_dim)
         self.w_r2 = nn.Linear(self.embed_dim, self.embed_dim)
         self.att = Attention(self.embed_dim)
-        new_size = (25, 64) #changed
-        new_weight = nn.Parameter(torch.empty(new_size))
-        self.v2e.weight = new_weight
+ 
     def forward(self, nodes, history_uv, history_r):
 
         embed_matrix = torch.empty(len(history_uv), self.embed_dim, dtype=torch.float).to(self.device)
@@ -40,7 +38,11 @@ class UV_Aggregator(nn.Module):
                 uv_rep = self.u2e.weight[nodes[i]]
             else:
                 # item component
-                e_uv = self.u2e.weight[history]
+                # Convert history to numerical indices
+                history_indices = [int(idx) for idx in history]
+
+                # Access the weight tensor using the numerical indices
+                e_uv = self.u2e.weight[history_indices]
                 uv_rep = self.v2e.weight[nodes[i]]
 
             e_r = self.r2e.weight[tmp_label]
