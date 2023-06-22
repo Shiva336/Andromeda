@@ -78,7 +78,7 @@ router.post("/", async(req,res)=> {
 });
 
 //product search
-router.post("/search",async(req,res)=> {
+router.put("/search",async(req,res)=> {
   try{
     const user = userModel.findOne({name: req.body.username}); 
     const product = productModel.findById(req.body.product_id);
@@ -120,6 +120,12 @@ router.put("/:id/rating", async(req,res)=> {
           username: req.body.username
         }
         await product.updateOne({ $push: { rating: updatedRating} });
+
+        //user item rating
+        const products = await productModel.find({});
+        const i = products.findIndex({name: req.body.id});
+
+        //item user rating
         res.status(200).json("The rating has been updated");
     }
     catch(err) {
@@ -153,6 +159,20 @@ router.put("/remove", async (req,res)=> {
   }
   catch(err) {
       res.status(500).json(err);
+  }
+});
+
+//get index
+router.put("/getindex", async(req,res)=> {
+  try {
+    console.log("s");
+    const products = await productModel.find({});
+    const i = products.findIndex({name: req.body.id});
+    const data = {id: i};
+     res.status(200).json(data);
+  }
+  catch(err) {
+      return res.status(500).json(err);
   }
 });
 
