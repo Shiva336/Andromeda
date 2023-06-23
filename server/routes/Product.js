@@ -162,14 +162,24 @@ router.put("/remove", async (req,res)=> {
   }
 });
 
-//get index
-router.put("/getindex", async(req,res)=> {
+//update rating dataset
+router.put("/rating-updation", async(req,res)=> {
   try {
-    console.log("s");
+    //user item rating
+    const user = req.body.username;
+    const users = await userModel.find({});
+    const userarray = Object.values(users).map(ob=>ob)
+    const idx = userarray.findIndex(obj=> obj.name === user)
+
+    const person = await userModel.find({name: user});
+    await person.updateOne({$push: {rated: req.body.rating}});
+
+    //item user rating
+    const product = req.body.product;
     const products = await productModel.find({});
-    const i = products.findIndex({name: req.body.id});
-    const data = {id: i};
-     res.status(200).json(data);
+    const productarray = Object.values(products).map(ob=>ob)
+    const index = productarray.findIndex(obj => obj._id === product);
+    
   }
   catch(err) {
       return res.status(500).json(err);
