@@ -16,6 +16,14 @@ const productSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    ratedBy: {
+        type: Array,
+        default:[]
+    },
+    interactedBy: {
+        type: Array,
+        default: []
+    },
     category: {
         type: String,
         require: true,

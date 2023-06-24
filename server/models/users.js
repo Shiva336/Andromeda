@@ -6,9 +6,23 @@ const userSchema = new mongoose.Schema({
         require: true,
         min: 3,
         max: 20
-    
     },
     phone: {
+        type: String,
+        require: true,
+        max: 10
+    },
+    age: {
+        type: String,
+        require: true,
+        max: 10
+    },
+    gender: {
+        type: String,
+        require: true,
+        max: 10
+    },
+    nationality: {
         type: String,
         require: true,
         max: 10
@@ -22,8 +36,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true,
         max: 50,
-        unique: true
-       
+        unique: true  
     },
     password: {
         type: String,
@@ -49,7 +62,11 @@ const userSchema = new mongoose.Schema({
             default: 0
         }
     },
-    searchData: {
+    rated: {
+        type: Array,
+        default: []
+    },
+    interacted: {
         type: Array,
         default: []
     },

@@ -28,7 +28,7 @@ function CartLayout(props) {
       await getCartData();
     })();
     return () => {};
-  });
+  },[]);
 
   async function handleRemoveFromCart() {
     const data = {
@@ -64,7 +64,7 @@ function CartLayout(props) {
           <div className='cart-items'>
             <div className='cart-product'>
               <div className='cart-left'>
-                <img src={cartItems.img} className='cart-product-image'></img>
+                <img src={cartItems.img} className='cart-product-image' alt='product'></img>
 
                 <h3>{cartItems.name}</h3>
               </div>
