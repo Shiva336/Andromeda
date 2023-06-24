@@ -230,6 +230,10 @@ def main():
     # model
     graphrec = GraphRec(enc_u, enc_v_history, r2e).to(device)
     optimizer = torch.optim.RMSprop(graphrec.parameters(), lr=args.lr, alpha=0.9)
+    # file_path = 'model_parameters.pth'
+    # if os.path.exists(file_path):
+    #     graphrec.load_state_dict(torch.load(file_path))
+    #     print("Loaded model parameters from:", file_path)
 
     best_rmse = 9999.0
     best_mae = 9999.0
@@ -249,6 +253,12 @@ def main():
         else:
             endure_count += 1
         print("rmse: %.4f, mae:%.4f " % (expected_rmse, mae))
+
+        if best_rmse < 0.4:
+            file_path = 'model_parameters.pth'
+            torch.save(graphrec.state_dict(), file_path)
+            break
+            
 
         if endure_count > 5:
             break
