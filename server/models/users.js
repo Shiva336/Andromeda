@@ -12,6 +12,21 @@ const userSchema = new mongoose.Schema({
         require: true,
         max: 10
     },
+    age: {
+        type: String,
+        require: true,
+        max: 10
+    },
+    gender: {
+        type: String,
+        require: true,
+        max: 10
+    },
+    nationality: {
+        type: String,
+        require: true,
+        max: 10
+    },
     address: {
         type: String,
         require: true,
@@ -21,8 +36,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true,
         max: 50,
-        unique: true
-       
+        unique: true  
     },
     password: {
         type: String,
