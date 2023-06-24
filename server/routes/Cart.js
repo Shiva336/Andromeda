@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const userModel = require('../models/users');
 const bcrypt = require('bcrypt');
+const productModel = require("../models/product");
 
 //add product to cart
 router.put('/cart', async (req, res) => {
   const user = await userModel.findOne({ name: req.body.username });
-  console.log(user.name);
   let flag = 0;
   try {
     user.cart.items.map((product) => {
@@ -19,9 +19,7 @@ router.put('/cart', async (req, res) => {
     if (flag == 1) {
       await user.updateOne({ $set: { cart: user.cart } });
       res.json(user);
-    }
-
-    else if(flag === 0) {
+    } else if (flag === 0) {
       const newItem = {
         quantity: 1,
         id: req.body.id,
@@ -29,10 +27,8 @@ router.put('/cart', async (req, res) => {
         total: req.body.price,
       };
       await user.cart.items.push(newItem);
-      if (user.cart.total == 0) 
-        user.cart.total = req.body.price;
-      else 
-        user.cart.total += req.body.price;
+      if (user.cart.total == 0) user.cart.total = req.body.price;
+      else user.cart.total += req.body.price;
       await user.save();
       res.status(200).json(user);
     }
@@ -158,11 +154,38 @@ router.put('/wishlist', async (req, res) => {
 router.put('/wishlist/show', async (req, res) => {
   try {
     const user = await userModel.findOne({ name: req.body.username });
-    console.log(user.wishlist);
     res.status(200).json(user.wishlist);
   } catch (err) {
     res.json(err);
   }
 });
+
+
+//update model
+router.put('/model-updation',async (req,res)=> {
+  try {
+    //user item interaction
+    const user = req.body.username;
+    const users = await userModel.find({});
+    const userarray = Object.values(users).map(ob=>ob)
+    const idx = userarray.findIndex(obj=> obj.name === user)
+    
+    //item user interaction 
+    const products = req.body.products;
+    const obj = await productModel.find({});
+    const productarray = Object.values(obj).map(ob=>ob)
+    products.map(async (product)=> {
+      const index = productarray.findIndex((obj)=> {
+        const sus = JSON.stringify(obj._id);
+       const str = sus.slice(1,sus.length-1)
+        return str === product.id;
+      })
+    })
+  }
+    catch(err) {
+      res.status(500).json(err);
+    }
+})
+
 
 module.exports = router;

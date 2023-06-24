@@ -28,14 +28,14 @@ function CartLayout(props) {
       await getCartData();
     })();
     return () => {};
-  }, []);
+  },[]);
 
   async function handleRemoveFromCart() {
     const data = {
       id: text.id,
       username: localStorage.getItem('loggedUser'),
     };
-    const response = await api.put(`order/remove`, data);
+    await api.put(`order/remove`, data);
     window.location.reload();
   }
 
@@ -44,7 +44,7 @@ function CartLayout(props) {
       id: text.id,
       username: localStorage.getItem('loggedUser'),
     };
-    const response = await api.put(`order/quantity/decrease`, data);
+    await api.put(`order/quantity/decrease`, data);
     window.location.reload();
   }
 
@@ -53,7 +53,7 @@ function CartLayout(props) {
       id: text.id,
       username: localStorage.getItem('loggedUser'),
     };
-    const response = await api.put(`order/quantity/increase`, data);
+    await api.put(`order/quantity/increase`, data);
     window.location.reload();
   }
 
@@ -64,7 +64,7 @@ function CartLayout(props) {
           <div className='cart-items'>
             <div className='cart-product'>
               <div className='cart-left'>
-                <img src={cartItems.img} className='cart-product-image'></img>
+                <img src={cartItems.img} className='cart-product-image' alt='product'></img>
 
                 <h3>{cartItems.name}</h3>
               </div>

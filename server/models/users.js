@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
         require: true,
         min: 3,
         max: 20
-    
     },
     phone: {
         type: String,
@@ -49,7 +48,11 @@ const userSchema = new mongoose.Schema({
             default: 0
         }
     },
-    searchData: {
+    rated: {
+        type: Array,
+        default: []
+    },
+    interacted: {
         type: Array,
         default: []
     },
