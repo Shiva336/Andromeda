@@ -177,7 +177,7 @@ router.put('/model-updation',async (req,res)=> {
     products.map(async (product)=> {
       const index = productarray.findIndex((obj)=> {
         const sus = JSON.stringify(obj._id);
-       const str = sus.slice(1,sus.length-1)
+        const str = sus.slice(1,sus.length-1)
         return str === product.id;
       })
     })
