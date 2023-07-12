@@ -42,7 +42,7 @@ If you use this code, please cite our paper:
 
 class GraphRec(nn.Module):
 
-    def __init__(self, enc_u, enc_v_history, r2e):
+    def __init__(self, enc_u, enc_v_history, r2e, hidden_dim):
         super(GraphRec, self).__init__()
         self.enc_u = enc_u
         self.enc_v_history = enc_v_history
@@ -61,6 +61,12 @@ class GraphRec(nn.Module):
         self.bn3 = nn.BatchNorm1d(self.embed_dim, momentum=0.5)
         self.bn4 = nn.BatchNorm1d(16, momentum=0.5)
         self.criterion = nn.MSELoss()
+        self.mlp = nn.Sequential(
+            nn.Linear(self.embed_dim*2, hidden_dim),  # Input size: self.embed_dim, Output size: hidden_dim
+            nn.ReLU(),
+            nn.Linear(hidden_dim, self.embed_dim),   # Input size: hidden_dim, Output size: self.embed_dim
+            nn.ReLU()
+        )
 
     def forward(self, nodes_u, nodes_v):
         embeds_u = self.enc_u(nodes_u)
@@ -76,6 +82,7 @@ class GraphRec(nn.Module):
         x_uv = torch.cat((x_u, x_v), 1)
         x = F.relu(self.bn3(self.w_uv1(x_uv)))
         x = F.dropout(x, training=self.training)
+        x_uv = self.mlp(x_uv)  # Apply the MLP to normalize the data
         x = F.relu(self.bn4(self.w_uv2(x)))
         x = F.dropout(x, training=self.training)
         scores = self.w_uv3(x)
@@ -115,6 +122,7 @@ def test(model, device, test_loader):
             target.append(list(tmp_target.data.cpu().numpy()))
     tmp_pred = np.array(sum(tmp_pred, []))
     target = np.array(sum(target, []))
+    print(tmp_pred)
     expected_rmse = sqrt(mean_squared_error(tmp_pred, target))
     mae = mean_absolute_error(tmp_pred, target)
     return expected_rmse, mae
@@ -124,7 +132,7 @@ def main():
     # Training settings
     parser = argparse.ArgumentParser(description='Social Recommendation: GraphRec model')
     parser.add_argument('--batch_size', type=int, default=128, metavar='N', help='input batch size for training')
-    parser.add_argument('--embed_dim', type=int, default=64, metavar='N', help='embedding size')
+    parser.add_argument('--embed_dim', type=int, default=256, metavar='N', help='embedding size')
     parser.add_argument('--lr', type=float, default=0.001, metavar='LR', help='learning rate')
     parser.add_argument('--test_batch_size', type=int, default=1000, metavar='N', help='input batch size for testing')
     parser.add_argument('--epochs', type=int, default=100, metavar='N', help='number of epochs to train')
@@ -200,11 +208,9 @@ def main():
     ratings_list: rating value from 0.5 to 4.0 (8 opinion embeddings)
     """
 
-    trainset = torch.utils.data.TensorDataset(torch.LongTensor(train_u), torch.LongTensor(train_v),
-                                              torch.FloatTensor(train_r))
-    testset = torch.utils.data.TensorDataset(torch.LongTensor(test_u), torch.LongTensor(test_v),
-                                             torch.FloatTensor(test_r))
-    train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True)
+    # trainset = torch.utils.data.TensorDataset(torch.LongTensor(train_u), torch.LongTensor(train_v),torch.FloatTensor(train_r))
+    testset = torch.utils.data.TensorDataset(torch.LongTensor(test_u), torch.LongTensor(test_v),torch.FloatTensor(test_r))
+    # train_loader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True)
     test_loader = torch.utils.data.DataLoader(testset, batch_size=args.test_batch_size, shuffle=True)
     num_users = history_u_lists.__len__()
     num_items = history_v_lists.__len__()
@@ -228,40 +234,44 @@ def main():
     enc_v_history = UV_Encoder(v2e, embed_dim, history_v_lists, history_vr_lists, agg_v_history, cuda=device, uv=False)
 
     # model
-    graphrec = GraphRec(enc_u, enc_v_history, r2e).to(device)
+    hidden_dim = 256
+    graphrec = GraphRec(enc_u, enc_v_history, r2e, hidden_dim).to(device)
     optimizer = torch.optim.RMSprop(graphrec.parameters(), lr=args.lr, alpha=0.9)
-    # file_path = 'model_parameters.pth'
-    # if os.path.exists(file_path):
-    #     graphrec.load_state_dict(torch.load(file_path))
-    #     print("Loaded model parameters from:", file_path)
+    file_path = './data/model_parameters1.pth'
+    device = torch.device('cpu')
+    if os.path.exists(file_path):
+        graphrec.load_state_dict(torch.load(file_path, map_location=device))
+        print("Loaded model parameters from:", file_path)
 
     best_rmse = 9999.0
     best_mae = 9999.0
     endure_count = 0
+    expected_rmse, mae = test(graphrec, device, test_loader)
 
-    for epoch in range(1, args.epochs + 1):
 
-        train(graphrec, device, train_loader, optimizer, epoch, best_rmse, best_mae)
-        expected_rmse, mae = test(graphrec, device, test_loader)
-        # please add the validation set to tune the hyper-parameters based on your datasets.
+    # for epoch in range(1, args.epochs + 1):
 
-        # early stopping (no validation set in toy dataset)
-        if best_rmse > expected_rmse:
-            best_rmse = expected_rmse
-            best_mae = mae
-            endure_count = 0
-        else:
-            endure_count += 1
-        print("rmse: %.4f, mae:%.4f " % (expected_rmse, mae))
+    #     # train(graphrec, device, train_loader, optimizer, epoch, best_rmse, best_mae)
+    #     expected_rmse, mae = test(graphrec, device, test_loader)
+    #     # please add the validation set to tune the hyper-parameters based on your datasets.
 
-        if best_rmse < 0.4:
-            file_path = 'model_parameters.pth'
-            torch.save(graphrec.state_dict(), file_path)
-            break
+    #     # early stopping (no validation set in toy dataset)
+    #     if best_rmse > expected_rmse:
+    #         best_rmse = expected_rmse
+    #         best_mae = mae
+    #         endure_count = 0
+    #     else:
+    #         endure_count += 1
+    #     print("rmse: %.4f, mae:%.4f " % (expected_rmse, mae))
+
+    #     if best_rmse < 0.4:
+    #         file_path = 'model_parameters.pth'
+    #         torch.save(graphrec.state_dict(), file_path)
+    #         break
             
 
-        if endure_count > 5:
-            break
+    #     if endure_count > 5:
+    #         break
 
 
 if __name__ == "__main__":
