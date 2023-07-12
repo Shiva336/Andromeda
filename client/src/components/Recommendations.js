@@ -7,7 +7,7 @@ function Recommendations() {
     <div className='recommendation-div' style={{ overflow: 'hidden' }}>
       <img
         alt='test'
-        src='http://image.pollinations.ai/prompt/image%20of%20an%20american%20sexy%20man%20age%2020s%20using%20black%20tshirt%20model'
+        src='http://image.pollinations.ai/prompt/image%20of%20an%20american%20man%20age%2020s%20using%20black%20tshirt%20model'
       />
       <img
         alt='test'
