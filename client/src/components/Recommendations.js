@@ -30,7 +30,7 @@ function Recommendations() {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer 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`,
+              Authorization: `Bearer <key_here>`,
             },
           }
         );
