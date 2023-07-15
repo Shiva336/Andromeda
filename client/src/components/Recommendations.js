@@ -5,7 +5,7 @@ function Recommendations() {
   const [prompt, setPrompt] = useState('');
   const [caption, setCaption] = useState('');
   async function getData() {
-    const apiKey = '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';
+    const apiKey = 'api-key-here';
 
     try {
       setPrompt(
@@ -41,6 +41,11 @@ function Recommendations() {
       console.error('Error generating caption:', error);
     }
   }
+  useEffect(() => {
+    (async () => {
+      await getData();
+    })();
+  }, []);
 
   return (
     <div className='recmmendation-div'>
