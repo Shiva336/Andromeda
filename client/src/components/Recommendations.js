@@ -6,40 +6,38 @@ function Recommendations() {
   const [caption, setCaption] = useState('');
   var flag = 0;
   async function getData() {
-    if (flag !== 0) {
-      try {
-        setPrompt(
-          'Create a catchy caption (of 6 words) for an ad for a t-shirt used by american man age 20'
-        );
-        const response = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
-          {
-            model: 'gpt-3.5-turbo',
-            messages: [
-              {
-                role: 'user',
-                content: prompt,
-              },
-            ],
-            temperature: 1,
-            max_tokens: 128,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer <key_here>`,
+    try {
+      setPrompt(
+        'Create a catchy caption (of 6 words) for an ad for a t-shirt used by american man age 20'
+      );
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: 'gpt-3.5-turbo',
+          messages: [
+            {
+              role: 'user',
+              content: prompt,
             },
-          }
-        );
-        const generatedCaption = response.data.choices[0].message.content;
-        setCaption(generatedCaption);
-        console.log(caption);
-      } catch (error) {
-        console.error('Error generating caption:', error);
-      }
+          ],
+          temperature: 1,
+          max_tokens: 128,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+        }
+      );
+      const generatedCaption = response.data.choices[0].message.content;
+      setCaption(generatedCaption);
+      console.log(caption);
+    } catch (error) {
+      console.error('Error generating caption:', error);
     }
   }
 
