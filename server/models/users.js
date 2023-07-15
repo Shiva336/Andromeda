@@ -51,7 +51,6 @@ const userSchema = new mongoose.Schema({
     cart: {
         orderNumber: {
             type: String,
-            unique: true
         },
         items: {
             type: Array,
@@ -60,7 +59,7 @@ const userSchema = new mongoose.Schema({
         total: {
             type: Number,
             default: 0
-        }
+        },
     },
     rated: {
         type: Array,

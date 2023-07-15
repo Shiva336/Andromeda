@@ -7,6 +7,7 @@ router.post("/register", async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    console.log(req.body)
 
     const newUser = new userModel({
       name: req.body.name,
@@ -14,10 +15,10 @@ router.post("/register", async (req, res) => {
       address: req.body.address,
       email: req.body.email,
       password: hashedPassword,
-      isAdmin: req.body.isAdmin,
       age: req.body.age,
       nationality: req.body.nationality,
-      gender: req.body.gender
+      gender: req.body.gender,
+      cart: {}
     });
     const User = await newUser.save();
     res.status(200).json(User);
