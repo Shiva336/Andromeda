@@ -241,7 +241,7 @@ function Auth() {
                     placeholder='    Age here'
                     className='auth-input'
                     autoComplete='off'
-                    ref={genderField}
+                    ref={ageField}
                   />
                   <input
                     type='text'
@@ -250,7 +250,7 @@ function Auth() {
                     placeholder='    Gender here'
                     className='auth-input'
                     autoComplete='off'
-                    ref={ageField}
+                    ref={genderField}
                   />
                 </div>
               </div>

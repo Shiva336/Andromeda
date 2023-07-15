@@ -1,44 +1,84 @@
 import '../styles/Recommendation.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { api } from '../api';
 function Recommendations() {
-  const [prompt, setPrompt] = useState('');
-  const [caption, setCaption] = useState('');
+  const currUser = localStorage.getItem('loggedUser');
+  var userDetails = {};
+  var prompt1, caption1;
   async function getData() {
-    const apiKey = 'api-key-here';
-
     try {
-      setPrompt(
-        'Create a catchy caption (of 6 words) for an ad for a t-shirt used by american man age 20'
-      );
-      const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-          temperature: 1,
-          max_tokens: 256,
-          top_p: 1,
-          frequency_penalty: 0,
-          presence_penalty: 0,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
-        }
-      );
-      const generatedCaption = response.data.choices[0].message.content;
-      setCaption(generatedCaption);
-      console.log(caption);
+      let data = {
+        name: currUser,
+      };
+      const response = await api.post(`/user/search-by-name`, data);
+      if (response.data.name === data.name) {
+        userDetails = {
+          nationality: response.data.nationality,
+          gender: response.data.gender,
+          age: response.data.age,
+        };
+      }
     } catch (error) {
-      console.error('Error generating caption:', error);
+      console.log(error);
+      return;
+    }
+
+    const apiKey = 'API_KEY';
+    let count = 0;
+    while (count === 0) {
+      count = 1;
+      try {
+        var age = userDetails.age;
+        var nationality = userDetails.nationality;
+        var gender = userDetails.gender;
+        if (gender === 'Male') {
+          if (age < 20) gender = 'boy';
+          else gender = 'man';
+        }
+        if (gender === 'Female') {
+          if (age < 20) gender = 'girl';
+          else gender = 'lady';
+        }
+        prompt1 =
+          'Create a catchy caption for an advertisement for a t-shirt used by ' +
+          nationality +
+          ' ' +
+          gender +
+          ' of age ' +
+          age;
+
+        console.log(prompt1);
+        const response = await axios.post(
+          'https://api.openai.com/v1/chat/completions',
+          {
+            model: 'gpt-3.5-turbo',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are a helpful assistant.',
+              },
+              {
+                role: 'user',
+                content: prompt1,
+              },
+            ],
+            temperature: 0.8,
+            max_tokens: 30,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${apiKey}`,
+            },
+          }
+        );
+        const generatedCaption = response.data.choices[0].message.content;
+        caption1 = generatedCaption;
+        console.log(caption1);
+      } catch (error) {
+        console.error('Error generating caption:', error);
+      }
     }
   }
   useEffect(() => {
