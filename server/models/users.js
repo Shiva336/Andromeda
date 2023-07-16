@@ -74,6 +74,10 @@ const userSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    userindex: {
+        type: Number,
+        required: true
+    },
     wishlist: {
         items: {
             type: Array,
