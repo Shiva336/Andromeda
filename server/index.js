@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { exec } = require('child_process');
+const fs = require('fs');
 const app = express();
 const url = 'mongodb+srv://admin:admin@andromeda.esfay3s.mongodb.net/andromeda';
 const { config } = require('dotenv');
@@ -50,5 +51,34 @@ app.get('/run-python', (req, res) => {
   });
 });
 
+
+
+app.post('/modify-file', (req, res) => {
+  const { k } = req.body;
+  const filePath = '../graphrec/data/test_user_array.json';
+
+    fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error reading the file:', err);
+      return res.status(500).json({ message: 'Error reading the file' });
+    }
+
+    try {
+      const numbersArray = JSON.parse(data);
+      const modifiedArray = Array.from({ length: numbersArray.length }, () => k);
+
+      fs.writeFile(filePath, JSON.stringify(modifiedArray), 'utf8', (err) => {
+        if (err) {
+          console.error('Error writing to the file:', err);
+          return res.status(500).json({ message: 'Error writing to the file' });
+        }
+        res.json({ message: `Successfully replaced all values with '${k}' and saved to the file.` });
+      });
+    } catch (parseError) {
+      console.error('Error parsing the file content as JSON:', parseError);
+      res.status(500).json({ message: 'Error parsing the file content as JSON' });
+    }
+  });
+});
 
 app.listen('3002', () => {});
