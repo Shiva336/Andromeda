@@ -50,6 +50,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+//get by name
 router.post('/search-by-name', async (req, res) => {
   try {
     let user = await userModel.findOne({ name: req.body.name });
