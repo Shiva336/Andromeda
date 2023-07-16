@@ -1,0 +1,17 @@
+{
+  "name": "huggingfaceapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hf.js",
+  "type":"module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@huggingface/hub": "^0.8.3",
+    "@huggingface/inference": "^2.6.1",
+    "node-fetch": "^3.3.1"
+  }
+}
