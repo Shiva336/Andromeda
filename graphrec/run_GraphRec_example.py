@@ -241,6 +241,7 @@ def main():
     device = torch.device('cpu')
     if os.path.exists(file_path):
         graphrec.load_state_dict(torch.load(file_path, map_location=device))
+        graphrec.eval()
         print("Loaded model parameters from:", file_path)
 
     best_rmse = 9999.0
