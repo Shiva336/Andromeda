@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
 const userModel = require('../models/users');
-const url = 'mongodb+srv://admin:admin@shophere.goowmfm.mongodb.net/test';
+const productModel = require('../models/product');
+const url = 'mongodb+srv://admin:admin@andromeda.esfay3s.mongodb.net/andromeda';
 const { config } = require('dotenv');
 
 config({ path: '../config/config.env' });
@@ -48,4 +49,4 @@ const importUserData = async () => {
   }
 };
 
-importUserData();
+importProductData();
