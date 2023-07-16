@@ -109,8 +109,20 @@ function Topbar() {
     localStorage.setItem('isLoggedIn', false);
     localStorage.setItem('loggedUser', 'guest');
     navigate(`/login`);
+    const filePath = '../graphrec/data/test_user_array.json';
     await api.post(`/user/search-by-name`, data)
-      .then((response)=>model(response.data._id))
+      .then((response)=>{
+        model(response.data._id)
+        let k=response.data.userindex
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ k: k }),
+        };
+        fetch('http://localhost:3002/modify-file', requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      })
   };
 
   const handleCartClick = () => {
