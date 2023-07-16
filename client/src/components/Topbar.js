@@ -12,6 +12,7 @@ import { FaHeart } from 'react-icons/fa';
 import { api } from '../api';
 let urlLength = window.location.pathname;
 function Topbar() {
+  var userDetails = {};
   const [loading, setLoading] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -20,6 +21,7 @@ function Topbar() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [result, setResult] = useState('');
   const scrollToFeatured = () => {
     const element = document.getElementById('featured-product-container');
     scroll.scrollTo(element.offsetTop);
@@ -85,10 +87,30 @@ function Topbar() {
     navigate(`/product/${param}`);
   };
 
-  const handleLogout = () => {
+  const model = (id) => {
+    console.log(id);
+    fetch('http://localhost:3002/run-python') // Replace with the correct server URL
+      .then((response) => response.json())
+      .then((data) =>{ console.log(data);
+      let indexdata = {
+        id:id,
+        top3:data
+      }  
+      api.post('/user/top3', indexdata)
+      
+      })
+      .catch((error) => setResult(`Error: ${error.message}`));
+  }
+
+  const handleLogout = async() => {  
+      let data = {
+        name: loggedUser,
+      };
     localStorage.setItem('isLoggedIn', false);
     localStorage.setItem('loggedUser', 'guest');
     navigate(`/login`);
+    await api.post(`/user/search-by-name`, data)
+      .then((response)=>model(response.data._id))
   };
 
   const handleCartClick = () => {

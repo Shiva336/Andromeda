@@ -122,7 +122,10 @@ def test(model, device, test_loader):
             target.append(list(tmp_target.data.cpu().numpy()))
     tmp_pred = np.array(sum(tmp_pred, []))
     target = np.array(sum(target, []))
-    print(tmp_pred)
+    sorted_indices = sorted(enumerate(tmp_pred), key=lambda item: item[1], reverse=True)
+    # Extract the sorted indices from the sorted (index, value) pairs.
+    sorted_indices = [index + 1 for index, _ in sorted_indices]
+    print(sorted_indices[:3])
     expected_rmse = sqrt(mean_squared_error(tmp_pred, target))
     mae = mean_absolute_error(tmp_pred, target)
     return expected_rmse, mae
@@ -146,7 +149,7 @@ def main():
 
     embed_dim = args.embed_dim
 
-    path_data = './data/'
+    path_data = 'C:\\Users\\Ravisankar S Menon\\Desktop\\andromeda\\Andromeda\\graphrec\\data\\'
     train_uf = open(path_data+'train_user_array.json', 'rb')
     train_vf = open(path_data+'train_item_array.json', 'rb')
     train_rf = open(path_data+'train_rating_array.json', 'rb')
@@ -237,12 +240,11 @@ def main():
     hidden_dim = 256
     graphrec = GraphRec(enc_u, enc_v_history, r2e, hidden_dim).to(device)
     optimizer = torch.optim.RMSprop(graphrec.parameters(), lr=args.lr, alpha=0.9)
-    file_path = './data/model_parameters1.pth'
+    file_path = 'C:\\Users\\Ravisankar S Menon\\Desktop\\andromeda\\Andromeda\\graphrec\\data\\model_parameters1.pth'
     device = torch.device('cpu')
     if os.path.exists(file_path):
         graphrec.load_state_dict(torch.load(file_path, map_location=device))
         graphrec.eval()
-        print("Loaded model parameters from:", file_path)
 
     best_rmse = 9999.0
     best_mae = 9999.0
