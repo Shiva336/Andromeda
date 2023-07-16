@@ -7,6 +7,8 @@ var fs = require("fs")
 //add product to cart
 router.put('/cart', async (req, res) => {
   const user = await userModel.findOne({ name: req.body.username });
+  const prod = await productModel.findOne({_id: req.body.id})
+  const idx = prod.index;
   let flag = 0;
   try {
     user.cart.items.map((product) => {
@@ -15,6 +17,7 @@ router.put('/cart', async (req, res) => {
         product.quantity = product.quantity + 1;
         product.total += product.price;
         user.cart.total += product.price;
+        product.index = product.index
       }
     });
     if (flag == 1) {
@@ -26,6 +29,7 @@ router.put('/cart', async (req, res) => {
         id: req.body.id,
         price: req.body.price,
         total: req.body.price,
+        index: idx
       };
       await user.cart.items.push(newItem);
       if (user.cart.total == 0) user.cart.total = req.body.price;
@@ -166,20 +170,20 @@ router.put('/wishlist/show', async (req, res) => {
 router.put('/model-updation',async (req,res)=> {
   try {
     //user item interaction
-    const user = userModel.find({name: req.body.name});
+    console.log(req.body)
+    const user = await userModel.find({name: req.body.username});
     const idx = toString(user.userindex);
     const Products = req.body.products;
     let = productindices = [];
-    for(let i=0; i<Products.length; i++) {
-      productindices.push(...Products[i].index);
-    }
+    
     fs.readFile("user_item_interactions.json", 'utf8', (err, data) => {
       try {
         let jsonData = JSON.parse(data)
-        if (jsonData.hasOwnProperty(idx) && Array.isArray(jsonData[idx])) {
-          jsonData[idx].push(...productindices);
-        }
-        fs.writeFile('user_item_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
+        Products.map((product)=> {
+          jsonData[idx].push(...product.index);
+        })
+        
+        fs.writeFileSync('user_item_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
           if (writeErr) {
             return res.status(500).json("error");
           }
@@ -191,25 +195,25 @@ router.put('/model-updation',async (req,res)=> {
     })
     
     //item user interaction 
-    for(let i=0; i<productindices.length; i++) {
-      fs.readFile("item_user_interactions.json", 'utf8', (err, data) => {
-        let jsonData = JSON.parse(data)
-        try {
-          const index = productindices[i];
-          if (jsonData.hasOwnProperty(index) && Array.isArray(jsonData[index])) {
-            jsonData[index].push(...user);
-          }
-          fs.writeFile('item_user_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
-            if (writeErr) {
-              return res.status(500).json("error");
-            }
-          });
-        }
-        catch(err) {
-          res.status(500).json(err);
-        }
-      })
-    }
+    // for(let i=0; i<productindices.length; i++) {
+    //   fs.readFile("item_user_interactions.json", 'utf8', (err, data) => {
+    //     let jsonData = JSON.parse(data)
+    //     try {
+    //       const index = productindices[i];
+    //       if (jsonData.hasOwnProperty(index) && Array.isArray(jsonData[index])) {
+    //         jsonData[index].push(...user);
+    //       }
+    //       fs.writeFile('item_user_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
+    //         if (writeErr) {
+    //           return res.status(500).json("error");
+    //         }
+    //       });
+    //     }
+    //     catch(err) {
+    //       res.status(500).json(err);
+    //     }
+    //   })
+    // }
   }
     catch(err) {
       res.status(500).json(err);
