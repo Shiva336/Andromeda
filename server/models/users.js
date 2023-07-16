@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema({
         min: 3,
         max: 20
     },
+    top3:{
+        type:Array,
+        default: [],
+        require:false
+    },
     phone: {
         type: String,
         require: true,
