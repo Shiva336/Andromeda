@@ -5,8 +5,16 @@ import { api } from '../api';
 function Recommendations() {
   const currUser = localStorage.getItem('loggedUser');
   var userDetails = {};
-  var prompt1, caption1;
+  var prompt1, caption1='';
+  const [count,setCount]=useState(0);
+  const [generatedCaption,setGeneratedCaption] = useState("");
   async function getData() {
+    
+    
+  }
+  useEffect(() => {
+    (async () => {
+      setCount(1);
     try {
       let data = {
         name: currUser,
@@ -24,10 +32,10 @@ function Recommendations() {
       return;
     }
 
-    const apiKey = 'API_KEY';
-    let count = 0;
-    while (count === 0) {
-      count = 1;
+    //***sk-gzV2c5wQPD***fcIa2zQxy5T3B***lbkFJMJiwFeRGa4IuQynppV9F***
+    const apiKey = '';
+    var flag=false
+    if(flag===true){
       try {
         var age = userDetails.age;
         var nationality = userDetails.nationality;
@@ -41,7 +49,7 @@ function Recommendations() {
           else gender = 'lady';
         }
         prompt1 =
-          'Create a catchy caption for an advertisement for a t-shirt used by ' +
+          'Create a catchy caption of 7 words for an advertisement for a t-shirt used by ' +
           nationality +
           ' ' +
           gender +
@@ -73,22 +81,16 @@ function Recommendations() {
             },
           }
         );
-        const generatedCaption = response.data.choices[0].message.content;
-        caption1 = generatedCaption;
-        console.log(caption1);
+        setGeneratedCaption(response.data.choices[0].message.content);
       } catch (error) {
         console.error('Error generating caption:', error);
       }
-    }
-  }
-  useEffect(() => {
-    (async () => {
-      await getData();
-    })();
+    }}  )();
   }, []);
 
   return (
-    <div className='recmmendation-div'>
+    <div className='recmmendation-div'>{count===1&&(
+      <>
       <div className='rec-img-div'>
         <div className='rec-1 all-recs'>
           <img
@@ -97,8 +99,7 @@ function Recommendations() {
             width='96%'
           />
           <div className='all-captions caption-1'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas
-            vel.
+           {generatedCaption}
           </div>
         </div>
         <div className='rec-2 all-recs'>
@@ -124,6 +125,8 @@ function Recommendations() {
           </div>
         </div>
       </div>
+      </>
+    )}
     </div>
   );
 }
