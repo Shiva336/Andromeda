@@ -182,11 +182,11 @@ function Recommendations() {
             alt='test'
             src='http://image.pollinations.ai/prompt/image%20of%20an%20american%20man%20in%20his%2020s%20using%20rolex%20watch%20model'
             width='96%'
-          /> (count2 && (<>
+          /> {count2 && (<>
           <div className='all-captions caption-2'>
           {generatedCaption2}
           </div>
-          </>))
+          </>)}
           
         </div>
         <div className='rec-3 all-recs'>

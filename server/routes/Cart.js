@@ -2,6 +2,7 @@ const router = require('express').Router();
 const userModel = require('../models/users');
 const bcrypt = require('bcrypt');
 const productModel = require("../models/product");
+var fs = require("fs")
 
 //add product to cart
 router.put('/cart', async (req, res) => {
@@ -161,26 +162,54 @@ router.put('/wishlist/show', async (req, res) => {
 });
 
 
-//update model
+//update model data
 router.put('/model-updation',async (req,res)=> {
   try {
     //user item interaction
-    const user = req.body.username;
-    const users = await userModel.find({});
-    const userarray = Object.values(users).map(ob=>ob)
-    const idx = userarray.findIndex(obj=> obj.name === user)
+    const user = userModel.find({name: req.body.name});
+    const idx = toString(user.userindex);
+    const Products = req.body.products;
+    let = productindices = [];
+    for(let i=0; i<Products.length; i++) {
+      productindices.push(...Products[i].index);
+    }
+    fs.readFile("user_item_interactions.json", 'utf8', (err, data) => {
+      try {
+        let jsonData = JSON.parse(data)
+        if (jsonData.hasOwnProperty(idx) && Array.isArray(jsonData[idx])) {
+          jsonData[idx].push(...productindices);
+        }
+        fs.writeFile('user_item_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
+          if (writeErr) {
+            return res.status(500).json("error");
+          }
+        });
+      }
+      catch(err) {
+        res.status(500).json(err);
+      }
+    })
     
     //item user interaction 
-    const products = req.body.products;
-    const obj = await productModel.find({});
-    const productarray = Object.values(obj).map(ob=>ob)
-    products.map(async (product)=> {
-      const index = productarray.findIndex((obj)=> {
-        const sus = JSON.stringify(obj._id);
-        const str = sus.slice(1,sus.length-1)
-        return str === product.id;
+    for(let i=0; i<productindices.length; i++) {
+      fs.readFile("item_user_interactions.json", 'utf8', (err, data) => {
+        let jsonData = JSON.parse(data)
+        try {
+          const index = productindices[i];
+          if (jsonData.hasOwnProperty(index) && Array.isArray(jsonData[index])) {
+            jsonData[index].push(...user);
+          }
+          fs.writeFile('item_user_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
+            if (writeErr) {
+              return res.status(500).json("error");
+            }
+          });
+        }
+        catch(err) {
+          res.status(500).json(err);
+        }
       })
-    })
+    }
   }
     catch(err) {
       res.status(500).json(err);
@@ -189,3 +218,5 @@ router.put('/model-updation',async (req,res)=> {
 
 
 module.exports = router;
+
+
