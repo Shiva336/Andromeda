@@ -167,33 +167,42 @@ router.put('/wishlist/show', async (req, res) => {
 
 
 //update model data
-router.put('/model-updation',async (req,res)=> {
-  try {
+router.post('/model-updation',async (req,res)=> 
+{
     //user item interaction
-    console.log(req.body)
-    const user = await userModel.find({name: req.body.username});
-    const idx = toString(user.userindex);
+    console.log(req.body);
+    const user = await userModel.findOne({ name: req.body.username });
+    const idx = JSON.stringify(user.userindex); 
     const Products = req.body.products;
-    let = productindices = [];
+      const filePath = '../graphrec/data/user_item_interactions.json';
+      let productindices = [];
+      Products.map((product)=> {
+        productindices.push(product.index);
+      })
+        fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          console.error('Error reading the file:', err);
+          return res.status(500).json({ message: 'Error reading the file' });
+        }
     
-    fs.readFile("user_item_interactions.json", 'utf8', (err, data) => {
-      try {
-        let jsonData = JSON.parse(data)
-        Products.map((product)=> {
-          jsonData[idx].push(...product.index);
-        })
-        
-        fs.writeFileSync('user_item_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
-          if (writeErr) {
-            return res.status(500).json("error");
-          }
-        });
-      }
-      catch(err) {
-        res.status(500).json(err);
-      }
-    })
-    
+        try {
+          const jsonData = JSON.parse(data);
+          jsonData[idx].concat(productindices);
+          fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing to the file:', err);
+              return res.status(500).json({ message: 'Error writing to the file' });
+            }
+            res.json({ message: `updated file` });
+          });
+        } catch (parseError) {
+          console.error('Error parsing the file content as JSON:', parseError);
+          res.status(500).json({ message: 'Error parsing the file content as JSON' });
+        }
+
+      // await fs.writeFile('user_item_interactions.json', JSON.stringify(jsonData, null, 2));
+
+      // res.status(200).json({ message: 'Model updated successfully' });
     //item user interaction 
     // for(let i=0; i<productindices.length; i++) {
     //   fs.readFile("item_user_interactions.json", 'utf8', (err, data) => {
@@ -214,10 +223,7 @@ router.put('/model-updation',async (req,res)=> {
     //     }
     //   })
     // }
-  }
-    catch(err) {
-      res.status(500).json(err);
-    }
+    })
 })
 
 

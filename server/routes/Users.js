@@ -54,7 +54,13 @@ router.get('/:id', async (req, res) => {
 router.post('/search-by-name', async (req, res) => {
   try {
     let user = await userModel.findOne({ name: req.body.name });
-    res.status(200).json(user);
+    let top3 = []
+    const arr = user.top3;
+    for(let i=0; i<top3.length; i++) {      
+      let temp = await userModel.findOne({index: arr[i]});
+      top3.push(temp);
+    }
+    res.status(200).json({user: user, top3: top3});
   } catch (err) {
     res.status(200).json("user doesn't exist");
   }
