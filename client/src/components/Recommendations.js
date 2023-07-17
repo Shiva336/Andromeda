@@ -4,6 +4,9 @@ import axios from 'axios';
 import { api } from '../api';
 function Recommendations() {
   const currUser = localStorage.getItem('loggedUser');
+  var age;
+  var nationality;
+  var gender;
   var userDetails = {};
   var prompt1, prompt2, prompt3;
   const [count1, setCount1] = useState(0);
@@ -12,7 +15,10 @@ function Recommendations() {
   const [generatedCaption, setGeneratedCaption] = useState('');
   const [generatedCaption2, setGeneratedCaption2] = useState('');
   const [generatedCaption3, setGeneratedCaption3] = useState('');
-  var top_three_products = [];
+  const [imagePrompt1, setImagePrompt1] = useState('');
+  const [imagePrompt2, setImagePrompt2] = useState('');
+  const [imagePrompt3, setImagePrompt3] = useState('');
+  var top_three = [];
   useEffect(() => {
     (async () => {
       try {
@@ -27,7 +33,9 @@ function Recommendations() {
             age: response.data.user.age,
           };
         }
-        console.log(response.data);
+        top_three.push(response.data.top3[0].name);
+        top_three.push(response.data.top3[1].name);
+        top_three.push(response.data.top3[2].name);
       } catch (error) {
         console.log(error);
         return;
@@ -38,9 +46,9 @@ function Recommendations() {
       var flag = false;
       //if(flag===true){
       try {
-        var age = userDetails.age;
-        var nationality = userDetails.nationality;
-        var gender = userDetails.gender;
+        age = userDetails.age;
+        nationality = userDetails.nationality;
+        gender = userDetails.gender;
         if (gender === 'Male') {
           if (age < 20) gender = 'boy';
           else gender = 'man';
@@ -50,7 +58,9 @@ function Recommendations() {
           else gender = 'lady';
         }
         prompt1 =
-          'Create a catchy caption of 7 words for an advertisement for a t-shirt used by ' +
+          'Create a catchy caption of 7 words for an advertisement for ' +
+          top_three[0] +
+          ' used by ' +
           nationality +
           ' ' +
           gender +
@@ -58,7 +68,9 @@ function Recommendations() {
           age;
 
         prompt2 =
-          'Create a catchy caption of 7 words for an advertisement for a watch used by ' +
+          'Create a catchy caption of 7 words for an advertisement for ' +
+          top_three[1] +
+          ' used by ' +
           nationality +
           ' ' +
           gender +
@@ -66,16 +78,14 @@ function Recommendations() {
           age;
 
         prompt3 =
-          'Create a catchy caption of 7 words for an advertisement for a laptop used by ' +
+          'Create a catchy caption of 7 words for an advertisement for ' +
+          top_three[0] +
+          ' used by ' +
           nationality +
           ' ' +
           gender +
           ' of age ' +
           age;
-
-        console.log(prompt1);
-        console.log(prompt2);
-        console.log(prompt3);
         const response = await axios.post(
           'https://api.openai.com/v1/chat/completions',
           {
@@ -162,6 +172,36 @@ function Recommendations() {
         console.error('Error generating caption:', error);
       }
       //  }
+      setImagePrompt1(
+        'http://image.pollinations.ai/prompt/image%20of%20an%20' +
+          nationality +
+          '%20' +
+          gender +
+          '%20age%20' +
+          age +
+          '%20using%20' +
+          top_three[0]
+      );
+      setImagePrompt2(
+        'http://image.pollinations.ai/prompt/image%20of%20an%20' +
+          nationality +
+          '%20' +
+          gender +
+          '%20age%20' +
+          age +
+          '%20using%20' +
+          top_three[1]
+      );
+      setImagePrompt3(
+        'http://image.pollinations.ai/prompt/image%20of%20an%20' +
+          nationality +
+          '%20' +
+          gender +
+          '%20age%20' +
+          age +
+          '%20using%20' +
+          top_three[2]
+      );
     })();
   }, []);
 
@@ -169,11 +209,7 @@ function Recommendations() {
     <div className='recmmendation-div'>
       <div className='rec-img-div'>
         <div className='rec-1 all-recs'>
-          <img
-            alt='test'
-            src='http://image.pollinations.ai/prompt/image%20of%20an%20american%20sexy%20man%20age%2020s%20using%20black%20tshirt%20model'
-            width='96%'
-          />
+          <img alt='test' src={imagePrompt1} width='96%' />
           {count1 && (
             <>
               <div className='all-captions caption-1'>{generatedCaption}</div>
@@ -181,11 +217,7 @@ function Recommendations() {
           )}
         </div>
         <div className='rec-2 all-recs'>
-          <img
-            alt='test'
-            src='http://image.pollinations.ai/prompt/image%20of%20an%20american%20man%20in%20his%2020s%20using%20rolex%20watch%20model'
-            width='96%'
-          />{' '}
+          <img alt='test' src={imagePrompt2} width='96%' />{' '}
           {count2 && (
             <>
               <div className='all-captions caption-2'>{generatedCaption2}</div>
@@ -193,11 +225,7 @@ function Recommendations() {
           )}
         </div>
         <div className='rec-3 all-recs'>
-          <img
-            alt='test'
-            src='http://image.pollinations.ai/prompt/image%20of%20%20american%20man%20age%2020%20using%20hp%20laptop'
-            width='96%'
-          />{' '}
+          <img alt='test' src={imagePrompt3} width='96%' />{' '}
           {count3 && (
             <>
               <div className='all-captions caption-3'>{generatedCaption3}</div>
