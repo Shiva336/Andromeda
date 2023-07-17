@@ -166,20 +166,56 @@ router.put("/remove", async (req,res)=> {
 router.put("/rating-updation", async(req,res)=> {
   try {
     //user item rating
-    const user = req.body.username;
-    const users = await userModel.find({});
-    const userarray = Object.values(users).map(ob=>ob)
-    const idx = userarray.findIndex(obj=> obj.name === user)
-
-    const person = await userModel.find({name: user});
-    await person.updateOne({$push: {rated: req.body.rating}});
-
+    console.log(req.body);
+    const user = await userModel.findOne({ name: req.body.username });
+    const idx = JSON.stringify(user.userindex+1);
+    let filePath = '../graphrec/data/user_item_ratings.json';
+    const product = await productModel.findOne({_id: req.body.id})
+    const productIndex = product.index;
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        console.error('Error reading the file:', err);
+        return res.status(500).json({ message: 'Error reading the file' });
+      }
+  
+      try {
+        const jsonData = JSON.parse(data);
+        jsonData[idx] = jsonData[idx].push(req.body.rating);
+        fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
+          if (err) {
+            console.error('Error writing to the file:', err);
+            return res.status(500).json({ message: 'Error writing to the file' });
+          }
+        });
+      } catch (parseError) {
+        console.error('Error parsing the file content as JSON:', parseError);
+        res.status(500).json({ message: 'Error parsing the file content as JSON' });
+      }
+    })
     //item user rating
-    const product = req.body.product;
-    const products = await productModel.find({});
-    const productarray = Object.values(products).map(ob=>ob)
-    const index = productarray.findIndex(obj => obj._id === product);
     
+    filePath = '../graphrec/data/item_user_ratings.json';
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        console.error('Error reading the file:', err);
+        return res.status(500).json({ message: 'Error reading the file' });
+      }
+  
+      try {
+        const pidx = JSON.stringify(productIndex);
+        const jsonData = JSON.parse(data);
+        jsonData[pidx] = jsonData[pidx].push(req.body.rating);
+        fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
+          if (err) {
+            console.error('Error writing to the file:', err);
+            return res.status(500).json({ message: 'Error writing to the file' });
+          }
+        });
+      } catch (parseError) {
+        console.error('Error parsing the file content as JSON:', parseError);
+        res.status(500).json({ message: 'Error parsing the file content as JSON' });
+      }
+    })
   }
   catch(err) {
       return res.status(500).json(err);

@@ -67,6 +67,7 @@ router.post('/search-by-name', async (req, res) => {
   }
 });
 
+//update top3
 router.post('/top3', async (req, res) => {
   try {
     console.log(req.body.top3);
