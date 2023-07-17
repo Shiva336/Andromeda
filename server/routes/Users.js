@@ -58,29 +58,13 @@ router.post('/search-by-name', async (req, res) => {
     const arr = user.top3;
     for(let i=0; i<top3.length; i++) {      
       let temp = await userModel.findOne({index: arr[i]});
-      top3.push(temp);
+      top3.push(temp)
     }
     res.status(200).json({user: user, top3: top3});
   } catch (err) {
     res.status(200).json("user doesn't exist");
   }
 });
-
-router.post('/top3', async (req, res) => {
-  try {
-    console.log(req.body.top3)
-    const arr = JSON.parse(req.body.top3);
-    console.log(arr)
-    const user = await userModel.findByIdAndUpdate(req.body.id, {
-        top3:arr
-      });
-    console.log(user)
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(200).json("user doesn't exist");
-  }
-});
-
 
 
 module.exports = router;

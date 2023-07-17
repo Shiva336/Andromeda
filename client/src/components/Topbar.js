@@ -113,7 +113,7 @@ function Topbar() {
     await api.post(`/user/search-by-name`, data)
       .then((response)=>{
         model(response.data._id)
-        let k=response.data.userindex
+        let k=response.data.user.userindex
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
