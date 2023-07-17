@@ -47,7 +47,13 @@ function Cart() {
           };
           console.log(model_params)
           await api.put(`order/clear`, sendIt);
-          await api.put(`order/model-updation`, model_params);
+          const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(model_params),
+          };
+          fetch(`http://localhost:3002/order/model-updation`, requestOptions).then((response) => response.json()).then((data) => console.log(data))
+         // await api.put(`order/model-updation`, model_params);
           navigate(`/`);
         }, 100);
       },
