@@ -33,9 +33,15 @@ function Recommendations() {
             age: response.data.user.age,
           };
         }
-        top_three.push(response.data.top3[0].name);
-        top_three.push(response.data.top3[1].name);
-        top_three.push(response.data.top3[2].name);
+        top_three.push(
+          response.data.top3[0].name + ' ' + response.data.top3[0].category
+        );
+        top_three.push(
+          response.data.top3[1].name + ' ' + response.data.top3[1].category
+        );
+        top_three.push(
+          response.data.top3[2].name + ' ' + response.data.top3[2].category
+        );
       } catch (error) {
         console.log(error);
         return;
@@ -43,8 +49,7 @@ function Recommendations() {
 
       //***sk-9ZfRp4v****hvusX*4rL5OABfT3Bl***bkFJHLC7v****7N9WljLTYiL6KzP
       const apiKey = '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';
-      var flag = false;
-      //if(flag===true){
+
       try {
         age = userDetails.age;
         nationality = userDetails.nationality;
@@ -168,12 +173,9 @@ function Recommendations() {
 
         setGeneratedCaption3(response3.data.choices[0].message.content);
         setCount3(1);
-
-        
       } catch (error) {
         console.error('Error generating caption:', error);
       }
-      //  }
       setImagePrompt1(
         'http://image.pollinations.ai/prompt/image%20of%20an%20' +
           nationality +
@@ -203,7 +205,8 @@ function Recommendations() {
           age +
           '%20using%20' +
           top_three[2]
-      );console.log(prompt1, prompt2, prompt3);
+      );
+      console.log(prompt1, prompt2, prompt3);
     })();
   }, []);
 
@@ -217,6 +220,11 @@ function Recommendations() {
               <div className='all-captions caption-1'>{generatedCaption}</div>
             </>
           )}
+          {count1 === 0 && (
+            <>
+              <div className='all-captions caption-1'></div>
+            </>
+          )}
         </div>
         <div className='rec-2 all-recs'>
           <img alt='test' src={imagePrompt2} width='96%' />{' '}
@@ -225,12 +233,22 @@ function Recommendations() {
               <div className='all-captions caption-2'>{generatedCaption2}</div>
             </>
           )}
+          {count2 === 0 && (
+            <>
+              <div className='all-captions caption-2'></div>
+            </>
+          )}
         </div>
         <div className='rec-3 all-recs'>
           <img alt='test' src={imagePrompt3} width='96%' />{' '}
           {count3 && (
             <>
               <div className='all-captions caption-3'>{generatedCaption3}</div>
+            </>
+          )}
+          {count3 === 0 && (
+            <>
+              <div className='all-captions caption-3'></div>
             </>
           )}
         </div>

@@ -10,7 +10,11 @@ const { config } = require('dotenv');
 
 config({ path: './config/config.env' });
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify:false });
+mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+});
 mongoose.connection.once('open', () => {
   console.log('connected');
 });
@@ -37,7 +41,7 @@ app.use('/api', paymentRouter);
 
 app.get('/run-python', (req, res) => {
   const pythonFile = '../graphrec/run_GraphRec_example.py';
-  const pythonCommand = 'python';
+  const pythonCommand = 'python3';
 
   exec(`${pythonCommand} ${pythonFile}`, (error, stdout, stderr) => {
     if (error) {
@@ -46,18 +50,16 @@ app.get('/run-python', (req, res) => {
     }
 
     const result = stdout || stderr || 'Python script executed successfully.';
-    console.log(result)
+    console.log(result);
     res.status(200).json(result);
   });
 });
-
-
 
 app.post('/modify-file', (req, res) => {
   const { k } = req.body;
   const filePath = '../graphrec/data/test_user_array.json';
 
-    fs.readFile(filePath, 'utf8', (err, data) => {
+  fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading the file:', err);
       return res.status(500).json({ message: 'Error reading the file' });
@@ -65,18 +67,25 @@ app.post('/modify-file', (req, res) => {
 
     try {
       const numbersArray = JSON.parse(data);
-      const modifiedArray = Array.from({ length: numbersArray.length }, () => k);
+      const modifiedArray = Array.from(
+        { length: numbersArray.length },
+        () => k
+      );
 
       fs.writeFile(filePath, JSON.stringify(modifiedArray), 'utf8', (err) => {
         if (err) {
           console.error('Error writing to the file:', err);
           return res.status(500).json({ message: 'Error writing to the file' });
         }
-        res.json({ message: `Successfully replaced all values with '${k}' and saved to the file.` });
+        res.json({
+          message: `Successfully replaced all values with '${k}' and saved to the file.`,
+        });
       });
     } catch (parseError) {
       console.error('Error parsing the file content as JSON:', parseError);
-      res.status(500).json({ message: 'Error parsing the file content as JSON' });
+      res
+        .status(500)
+        .json({ message: 'Error parsing the file content as JSON' });
     }
   });
 });
