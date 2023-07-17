@@ -172,7 +172,7 @@ router.post('/model-updation',async (req,res)=>
     //user item interaction
     console.log(req.body);
     const user = await userModel.findOne({ name: req.body.username });
-    const idx = JSON.stringify(user.userindex); 
+    const idx = JSON.stringify(user.userindex+1); 
     const Products = req.body.products;
       const filePath = '../graphrec/data/user_item_interactions.json';
       let productindices = [];
@@ -187,7 +187,10 @@ router.post('/model-updation',async (req,res)=>
     
         try {
           const jsonData = JSON.parse(data);
-          jsonData[idx].concat(productindices);
+          console.log(productindices);
+          console.log(jsonData[idx])
+          jsonData[idx] = jsonData[idx].concat(productindices);
+          console.log(jsonData[idx])
           fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
             if (err) {
               console.error('Error writing to the file:', err);
