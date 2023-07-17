@@ -2,7 +2,8 @@ const router = require('express').Router();
 const userModel = require('../models/users');
 const bcrypt = require('bcrypt');
 const productModel = require("../models/product");
-var fs = require("fs")
+var fs = require("fs");
+const { json } = require('body-parser');
 
 //add product to cart
 router.put('/cart', async (req, res) => {
@@ -172,9 +173,9 @@ router.post('/model-updation',async (req,res)=>
     //user item interaction
     console.log(req.body);
     const user = await userModel.findOne({ name: req.body.username });
-    const idx = JSON.stringify(user.userindex); 
+    const idx = JSON.stringify(user.userindex+1); 
     const Products = req.body.products;
-      const filePath = '../graphrec/data/user_item_interactions.json';
+      let filePath = '../graphrec/data/user_item_interactions.json';
       let productindices = [];
       Products.map((product)=> {
         productindices.push(product.index);
@@ -187,7 +188,33 @@ router.post('/model-updation',async (req,res)=>
     
         try {
           const jsonData = JSON.parse(data);
-          jsonData[idx].concat(productindices);
+          jsonData[idx] = jsonData[idx].concat(productindices);
+          fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing to the file:', err);
+              return res.status(500).json({ message: 'Error writing to the file' });
+            }
+          });
+        } catch (parseError) {
+          console.error('Error parsing the file content as JSON:', parseError);
+          res.status(500).json({ message: 'Error parsing the file content as JSON' });
+        }
+
+
+    //item user interaction
+    filePath = '../graphrec/data/item_user_interactions.json' 
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          console.error('Error reading the file:', err);
+          return res.status(500).json({ message: 'Error reading the file' });
+        }
+        try {
+          let jsonData = JSON.parse(data)
+          for(let i=0; i<productindices.length; i++) {
+            const index = productindices[i];
+            jsonData[index].push(user.userindex+1);
+          }
+      
           fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
             if (err) {
               console.error('Error writing to the file:', err);
@@ -195,34 +222,11 @@ router.post('/model-updation',async (req,res)=>
             }
             res.json({ message: `updated file` });
           });
-        } catch (parseError) {
-          console.error('Error parsing the file content as JSON:', parseError);
-          res.status(500).json({ message: 'Error parsing the file content as JSON' });
         }
-
-      // await fs.writeFile('user_item_interactions.json', JSON.stringify(jsonData, null, 2));
-
-      // res.status(200).json({ message: 'Model updated successfully' });
-    //item user interaction 
-    // for(let i=0; i<productindices.length; i++) {
-    //   fs.readFile("item_user_interactions.json", 'utf8', (err, data) => {
-    //     let jsonData = JSON.parse(data)
-    //     try {
-    //       const index = productindices[i];
-    //       if (jsonData.hasOwnProperty(index) && Array.isArray(jsonData[index])) {
-    //         jsonData[index].push(...user);
-    //       }
-    //       fs.writeFile('item_user_interactions.json', JSON.stringify(jsonData, null, 2), (writeErr) => {
-    //         if (writeErr) {
-    //           return res.status(500).json("error");
-    //         }
-    //       });
-    //     }
-    //     catch(err) {
-    //       res.status(500).json(err);
-    //     }
-    //   })
-    // }
+        catch(err) {
+          res.status(500).json(err);
+        }
+      })
     })
 })
 

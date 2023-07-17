@@ -149,7 +149,7 @@ def main():
 
     embed_dim = args.embed_dim
 
-    path_data = 'C:\\Users\\Ravisankar S Menon\\Desktop\\andromeda\\Andromeda\\graphrec\\data\\'
+    path_data = '../graphrec/data/'
     train_uf = open(path_data+'train_user_array.json', 'rb')
     train_vf = open(path_data+'train_item_array.json', 'rb')
     train_rf = open(path_data+'train_rating_array.json', 'rb')
@@ -240,7 +240,7 @@ def main():
     hidden_dim = 256
     graphrec = GraphRec(enc_u, enc_v_history, r2e, hidden_dim).to(device)
     optimizer = torch.optim.RMSprop(graphrec.parameters(), lr=args.lr, alpha=0.9)
-    file_path = 'C:\\Users\\Ravisankar S Menon\\Desktop\\andromeda\\Andromeda\\graphrec\\data\\model_parameters1.pth'
+    file_path = '../graphrec/data/model_parameters1.pth'
     device = torch.device('cpu')
     if os.path.exists(file_path):
         graphrec.load_state_dict(torch.load(file_path, map_location=device))
