@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const productModel = require("../models/product");
 const userModel = require("../models/users");
+var fs = require("fs");
 
 //get all products
 router.get("/", async(req,res)=> {
@@ -120,13 +121,16 @@ router.put("/:id/rating", async(req,res)=> {
           username: req.body.username
         }
         await product.updateOne({ $push: { rating: updatedRating} });
+        const user = await userModel.findOne({name: req.body.username})
 
-        //user item rating
-        const products = await productModel.find({});
-        const i = products.findIndex({name: req.body.id});
+        const data = {
+          id: req.params.id,
+          rating: req.body.newrating
+        }
+        await user.updateOne({$push: {rated: data}})
 
-        //item user rating
-        res.status(200).json("The rating has been updated");
+        console.log(rating);
+        res.status(200).json({rating: req.body.newrating});
     }
     catch(err) {
         console.log(err);
@@ -163,48 +167,44 @@ router.put("/remove", async (req,res)=> {
 });
 
 //update rating dataset
-router.put("/rating-updation", async(req,res)=> {
+router.post("/rating-updation", async(req,res)=> {
   try {
     //user item rating
     console.log(req.body);
     const user = await userModel.findOne({ name: req.body.username });
     const idx = JSON.stringify(user.userindex+1);
     let filePath = '../graphrec/data/user_item_ratings.json';
-    const product = await productModel.findOne({_id: req.body.id})
-    const productIndex = product.index;
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Error reading the file:', err);
-        return res.status(500).json({ message: 'Error reading the file' });
-      }
-  
-      try {
-        const jsonData = JSON.parse(data);
-        jsonData[idx] = jsonData[idx].push(req.body.rating);
-        fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
-          if (err) {
-            console.error('Error writing to the file:', err);
-            return res.status(500).json({ message: 'Error writing to the file' });
-          }
-        });
-      } catch (parseError) {
-        console.error('Error parsing the file content as JSON:', parseError);
-        res.status(500).json({ message: 'Error parsing the file content as JSON' });
-      }
-    })
-    //item user rating
     
-    filePath = '../graphrec/data/item_user_ratings.json';
-    fs.readFile(filePath, 'utf8', (err, data) => {
+    let ratings = [];
+    const productindices = [];
+    const products = req.body.products;
+    const userratings = user.rated;
+    products.map((product) => {
+      const id = product.id;
+      let flag = 0;
+      productindices.push(JSON.stringify(product.index));
+      userratings.map((rate)=> {
+        if(id === rate.id) {
+          ratings.push(rate.rating);
+          flag =1 ;
+        }
+      })
+
+      if(flag === 0) {
+        ratings.push(3);
+      }
+    })
+
+    console.log("A");
+    fs.readFile(filePath, 'utf8', (err, data) => { 
       if (err) {
         console.error('Error reading the file:', err);
         return res.status(500).json({ message: 'Error reading the file' });
       }
   
       try {
-        const pidx = JSON.stringify(productIndex);
         const jsonData = JSON.parse(data);
-        jsonData[pidx] = jsonData[pidx].push(req.body.rating);
+        jsonData[idx] = jsonData[idx].concat(ratings);
         fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
           if (err) {
             console.error('Error writing to the file:', err);
@@ -215,10 +215,35 @@ router.put("/rating-updation", async(req,res)=> {
         console.error('Error parsing the file content as JSON:', parseError);
         res.status(500).json({ message: 'Error parsing the file content as JSON' });
       }
+
+  //item user ratings
+  filePath = '../graphrec/data/item_user_ratings.json';
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        console.error('Error reading the file:', err);
+        return res.status(500).json({ message: 'Error reading the file' });
+      }
+      try {
+        const jsonData = JSON.parse(data);
+        for(let i=0; i<productindices.length; i++) {
+          jsonData[productindices[i]].push(ratings[i]);
+        }
+        fs.writeFile(filePath, JSON.stringify(jsonData), 'utf8', (err) => {
+          if (err) {
+            console.error('Error writing to the file:', err);
+            return res.status(500).json({ message: 'Error writing to the file' });
+          }
+          res.json({ message: `updated file` });
+        });
+      }
+      catch(err) {
+        res.status(500).json(err);
+      }
     })
+  })
   }
   catch(err) {
-      return res.status(500).json(err);
+      return res.status(500).json("didnt even do anything");
   }
 });
 
