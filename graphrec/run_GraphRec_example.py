@@ -240,7 +240,7 @@ def main():
     hidden_dim = 256
     graphrec = GraphRec(enc_u, enc_v_history, r2e, hidden_dim).to(device)
     optimizer = torch.optim.RMSprop(graphrec.parameters(), lr=args.lr, alpha=0.9)
-    file_path = '../graphrec/data/model_parameters1.pth'
+    file_path = '../graphrec/data/model_parameters0.8.pth'
     device = torch.device('cpu')
     if os.path.exists(file_path):
         graphrec.load_state_dict(torch.load(file_path, map_location=device))
