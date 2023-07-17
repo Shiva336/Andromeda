@@ -46,8 +46,8 @@ function Cart() {
             products: curr_products,
           };
           console.log(model_params)
-          await api.put(`order/clear`, sendIt);
-          await api.put(`order/model-updation`, model_params);
+          await api.put(`order/clear`, sendIt).then((response)=>console.log(response));
+          // await api.put(`order/model-updation`, model_params);
           navigate(`/`);
         }, 100);
       },
