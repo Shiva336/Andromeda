@@ -59,7 +59,7 @@ router.post('/search-by-name', async (req, res) => {
     const arr = user.top3;
     for (let i = 0; i < arr.length; i++) {
       let temp = await productModel.findOne({ index: arr[i] });
-      console.log(temp);
+      top3.push(temp);
     }
     res.status(200).json({ user: user, top3: top3 });
   } catch (err) {
