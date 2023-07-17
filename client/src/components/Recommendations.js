@@ -41,8 +41,8 @@ function Recommendations() {
         return;
       }
 
-      //***sk-gzV2c5wQPD***fcIa2zQxy5T3B***lbkFJMJiwFeRGa4IuQynppV9F***
-      const apiKey = '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';
+      //***sk-9ZfRp4v****hvusX*4rL5OABfT3Bl***bkFJHLC7v****7N9WljLTYiL6KzP
+      const apiKey = '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';
       var flag = false;
       //if(flag===true){
       try {
@@ -79,7 +79,7 @@ function Recommendations() {
 
         prompt3 =
           'Create a catchy caption of 7 words for an advertisement for ' +
-          top_three[0] +
+          top_three[2] +
           ' used by ' +
           nationality +
           ' ' +
@@ -152,7 +152,7 @@ function Recommendations() {
               },
               {
                 role: 'user',
-                content: prompt2,
+                content: prompt3,
               },
             ],
             temperature: 0.8,
@@ -168,6 +168,8 @@ function Recommendations() {
 
         setGeneratedCaption3(response3.data.choices[0].message.content);
         setCount3(1);
+
+        
       } catch (error) {
         console.error('Error generating caption:', error);
       }
@@ -201,7 +203,7 @@ function Recommendations() {
           age +
           '%20using%20' +
           top_three[2]
-      );
+      );console.log(prompt1, prompt2, prompt3);
     })();
   }, []);
 

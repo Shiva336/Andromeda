@@ -112,7 +112,7 @@ function Topbar() {
     const filePath = '../graphrec/data/test_user_array.json';
     await api.post(`/user/search-by-name`, data)
       .then((response)=>{
-        model(response.data._id)
+        model(response.data.user._id)
         let k=response.data.user.userindex
         const requestOptions = {
           method: 'POST',
