@@ -2,7 +2,9 @@ import '../styles/Recommendation.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { api } from '../api';
+import { useNavigate } from 'react-router-dom';
 function Recommendations() {
+  let navigate = useNavigate();
   const currUser = localStorage.getItem('loggedUser');
   var age;
   var nationality;
@@ -19,6 +21,9 @@ function Recommendations() {
   const [imagePrompt2, setImagePrompt2] = useState('');
   const [imagePrompt3, setImagePrompt3] = useState('');
   var top_three = [];
+  const [product1, setProduct1] = useState();
+  const [product2, setProduct2] = useState();
+  const [product3, setProduct3] = useState();
   useEffect(() => {
     (async () => {
       try {
@@ -42,13 +47,16 @@ function Recommendations() {
         top_three.push(
           response.data.top3[2].name + ' ' + response.data.top3[2].category
         );
+        setProduct1(response.data.top3[0]._id);
+        setProduct2(response.data.top3[1]._id);
+        setProduct3(response.data.top3[2]._id);
       } catch (error) {
         console.log(error);
         return;
       }
 
       //***sk-9ZfRp4v****hvusX*4rL5OABfT3Bl***bkFJHLC7v****7N9WljLTYiL6KzP
-      const apiKey = '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';
+      const apiKey = 'API_HERE';
 
       try {
         age = userDetails.age;
@@ -213,7 +221,13 @@ function Recommendations() {
   return (
     <div className='recmmendation-div'>
       <div className='rec-img-div'>
-        <div className='rec-1 all-recs'>
+        <div
+          className='rec-1 all-recs'
+          onClick={() => {
+            console.log(product1);
+            navigate(`/product/${product1}`);
+          }}
+        >
           <img alt='test' src={imagePrompt1} width='96%' />
           {count1 && (
             <>
@@ -226,7 +240,12 @@ function Recommendations() {
             </>
           )}
         </div>
-        <div className='rec-2 all-recs'>
+        <div
+          className='rec-2 all-recs'
+          onClick={() => {
+            navigate(`/product/${product2}`);
+          }}
+        >
           <img alt='test' src={imagePrompt2} width='96%' />{' '}
           {count2 && (
             <>
@@ -239,7 +258,12 @@ function Recommendations() {
             </>
           )}
         </div>
-        <div className='rec-3 all-recs'>
+        <div
+          className='rec-3 all-recs'
+          onClick={() => {
+            navigate(`/product/${product3}`);
+          }}
+        >
           <img alt='test' src={imagePrompt3} width='96%' />{' '}
           {count3 && (
             <>
