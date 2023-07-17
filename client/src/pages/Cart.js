@@ -53,7 +53,7 @@ function Cart() {
             body: JSON.stringify(model_params),
           };
           fetch(`http://localhost:3002/order/model-updation`, requestOptions).then((response) => response.json()).then((data) => console.log(data))
-         // await api.put(`order/model-updation`, model_params);
+          fetch(`http://localhost:3002/product/rating-updation`, requestOptions).then((response) => response.json()).then((data) => console.log(data))
           navigate(`/`);
         }, 100);
       },

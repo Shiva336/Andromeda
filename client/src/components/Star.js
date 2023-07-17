@@ -1,20 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import '../styles/star.css';
 import { api } from "../api";
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const Star = (props) => {
-    const navigate = useNavigate();
-    const [isRated, setIsRated] = useState(false);
     const { id } = useParams();
-    const changeGrade = (e) => {
+    const changeGrade = async (e) => {
         const data = {
             newrating: parseInt(e.target.value)+1,
-            username: localStorage.getItem("loggedUser")
+            username: localStorage.getItem("loggedUser"),
+            id: id
         }
-        const response = api.put(`/product/${id}/rating`, data);
+        const response = await api.put(`/product/${id}/rating`, data);
+
         props.changeGradeIndex(e.target.value);
     }
     return (
