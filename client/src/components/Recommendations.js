@@ -11,9 +11,7 @@ function Recommendations() {
   var gender;
   var userDetails = {};
   var prompt1, prompt2, prompt3;
-  const [count1, setCount1] = useState(0);
-  const [count2, setCount2] = useState(0);
-  const [count3, setCount3] = useState(0);
+  const [count, setCount] = useState(0);
   const [generatedCaption, setGeneratedCaption] = useState('');
   const [generatedCaption2, setGeneratedCaption2] = useState('');
   const [generatedCaption3, setGeneratedCaption3] = useState('');
@@ -56,7 +54,7 @@ function Recommendations() {
       }
 
       //***sk-9ZfRp4v****hvusX*4rL5OABfT3Bl***bkFJHLC7v****7N9WljLTYiL6KzP
-      const apiKey = 'API_HERE';
+      const apiKey = '<API_HERE>';
 
       try {
         age = userDetails.age;
@@ -125,7 +123,7 @@ function Recommendations() {
         );
         setGeneratedCaption(response.data.choices[0].message.content);
 
-        setCount1(1);
+        setTimeout(3000);
         const response2 = await axios.post(
           'https://api.openai.com/v1/chat/completions',
           {
@@ -153,7 +151,7 @@ function Recommendations() {
 
         setGeneratedCaption2(response2.data.choices[0].message.content);
 
-        setCount2(1);
+        setTimeout(3000);
         const response3 = await axios.post(
           'https://api.openai.com/v1/chat/completions',
           {
@@ -180,7 +178,6 @@ function Recommendations() {
         );
 
         setGeneratedCaption3(response3.data.choices[0].message.content);
-        setCount3(1);
       } catch (error) {
         console.error('Error generating caption:', error);
       }
@@ -214,7 +211,8 @@ function Recommendations() {
           '%20using%20' +
           top_three[2]
       );
-      console.log(prompt1, prompt2, prompt3);
+
+      setCount(1);
     })();
   }, []);
 
@@ -229,12 +227,12 @@ function Recommendations() {
           }}
         >
           <img alt='test' src={imagePrompt1} width='96%' />
-          {count1 && (
+          {generatedCaption.length > 0 && (
             <>
               <div className='all-captions caption-1'>{generatedCaption}</div>
             </>
           )}
-          {count1 === 0 && (
+          {count === 0 && (
             <>
               <div className='all-captions caption-1'></div>
             </>
@@ -247,12 +245,12 @@ function Recommendations() {
           }}
         >
           <img alt='test' src={imagePrompt2} width='96%' />{' '}
-          {count2 && (
+          {generatedCaption2.length > 0 && (
             <>
               <div className='all-captions caption-2'>{generatedCaption2}</div>
             </>
           )}
-          {count2 === 0 && (
+          {count === 0 && (
             <>
               <div className='all-captions caption-2'></div>
             </>
@@ -265,12 +263,12 @@ function Recommendations() {
           }}
         >
           <img alt='test' src={imagePrompt3} width='96%' />{' '}
-          {count3 && (
+          {generatedCaption3.length > 0 && (
             <>
               <div className='all-captions caption-3'>{generatedCaption3}</div>
             </>
           )}
-          {count3 === 0 && (
+          {count === 0 && (
             <>
               <div className='all-captions caption-3'></div>
             </>
