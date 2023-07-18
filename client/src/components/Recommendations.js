@@ -54,7 +54,7 @@ function Recommendations() {
       }
 
       //***sk-9ZfRp4v****hvusX*4rL5OABfT3Bl***bkFJHLC7v****7N9WljLTYiL6KzP
-      const apiKey = 'API_HERE';
+      const apiKey = '<API_HERE>';
 
       try {
         age = userDetails.age;
@@ -123,6 +123,7 @@ function Recommendations() {
         );
         setGeneratedCaption(response.data.choices[0].message.content);
 
+        setTimeout(3000);
         const response2 = await axios.post(
           'https://api.openai.com/v1/chat/completions',
           {
@@ -150,6 +151,7 @@ function Recommendations() {
 
         setGeneratedCaption2(response2.data.choices[0].message.content);
 
+        setTimeout(3000);
         const response3 = await axios.post(
           'https://api.openai.com/v1/chat/completions',
           {
